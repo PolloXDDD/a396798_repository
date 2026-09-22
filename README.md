@@ -1,6 +1,7 @@
 # A396798: manuscript and exact verification
 
-Prepared for Kaoru Aguilera Katayama on September 22, 2026.
+Kaoru Aguilera Katayama
+September 22, 2026.
 
 ## Contents
 
