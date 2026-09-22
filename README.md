@@ -5,7 +5,7 @@ Prepared for Kaoru Aguilera Katayama on September 22, 2026.
 ## Contents
 
 - `a396798_congruences.pdf`: the five-page English mathematical paper.
-- `a396798_congruences.tex`: self-contained LaTeX source, including references.
+- `[a396798_congruences.tex](https://github.com/PolloXDDD/a396798_repository)`: self-contained LaTeX source, including references.
 - `verify_a396798.py`: Python 3 verification, using only the standard library.
 - `verification_results.txt`: output from the completed verification run.
 
