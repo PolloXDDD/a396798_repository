@@ -54,16 +54,9 @@ Run:
 
 ```sh
 python3 verify_a396798.py
-pdflatex -interaction=nonstopmode -halt-on-error a396798_congruences.tex
-pdflatex -interaction=nonstopmode -halt-on-error a396798_congruences.tex
 ```
 
-Alternatively, use `latexmk -pdf a396798_congruences.tex`.
 
 The verifier checks rational identities by exact polynomial cross-products
 modulo 8, reconstructs 20 integer coefficients independently, and checks
 coefficients through degree 64 for iterates 0 through 16. Every check passed.
-
-The proof and manuscript were developed with ChatGPT assistance. No
-submission to OEIS or a journal was made, and independent peer review
-has not been performed.
