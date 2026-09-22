@@ -1,0 +1,7 @@
+PASS: exact rational identity F(F(x)) = x/(1-2x) modulo 8
+PASS: all eight exact rational transition identities modulo 8
+PASS: exact rational defining identity F = x + F^{o4} F^{o5}
+PASS: 20 independently reconstructed integer coefficients match OEIS
+PASS: all coefficients through degree 64 for iterates k=0,...,16
+PASS: corrected [1,1,5,5] coefficient block starts at n=2
+ALL CHECKS PASSED
