@@ -1,0 +1,327 @@
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{parskip}
+\usepackage{microtype}
+\usepackage{booktabs,array}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue,
+  pdftitle={Congruences for an Iterative Generating Function: A396798},
+  pdfauthor={Research note prepared for Kaoru Aguilera Katayama}}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\newcommand{\Z}{\mathbb Z}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\itn}[2]{{#1}^{\circ #2}}
+\newcommand{\coeff}[2]{[x^{#1}]\,#2}
+\title{Congruences for an Iterative Generating Function:\\
+  A Proof of the A396798 Iteration Conjectures}
+\author{Kaoru Aguilera Katayama}
+\date{September 22, 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Let $A(x)\in x+x^2\Z[[x]]$ be determined by
+$A(x)=x+\itn{A}{4}(x)\itn{A}{5}(x)$, where superscripts with a
+composition symbol denote iteration. We prove that, for every integer $k$,
+\[
+\itn{A}{k}(x)\equiv
+\frac{x}{1-kx}+4\eps_k\frac{x^4}{(1-x)^3}\pmod 8,
+\qquad \eps_k\in\{0,1\},\quad \eps_k\equiv k\pmod 2.
+\]
+This establishes the seven iteration congruences listed as conjectures in
+OEIS A396798 at the time of consultation. It also gives the precise starting
+index of the coefficient pattern for $A$ itself. The proof uses uniqueness
+of a formal fixed point and an explicit rational function over
+$\Z/8\Z$. In this ring the reduced series has compositional order exactly
+eight. An accompanying dependency-free Python program checks the rational
+identities exactly and independently reconstructs initial coefficients.
+\end{abstract}
+
+\section{The problem and its documented status}
+
+Paul D. Hanna's sequence A396798 is defined in OEIS by the ordinary
+generating function
+\begin{equation}\label{eq:definition}
+A(x)=\sum_{n\geq1}a(n)x^n
+     =x+\itn{A}{4}(x)\itn{A}{5}(x).
+\end{equation}
+Thus $a(1),a(2),\ldots$ begin $1,1,9,133,2517,55609$.
+The notation $\itn{A}{j}$ means $j$ successive substitutions of $A$,
+not the ordinary product power $A(x)^j$. We set $\itn{A}{0}(x)=x$.
+Negative iterates use the compositional inverse, which exists because
+the coefficient of $x$ is one.
+
+The source record \cite{oeis}, checked on September 22, 2026, labels
+seven assertions about iterates $2$ through $8$ as conjectures. They
+predict vanishing coefficient tails for even iterates and periodic
+residue blocks for odd iterates. The result below proves all seven.
+The record also proposes a residue block for $a(n)$ itself; its stated
+starting index needs the correction explained in Section~\ref{sec:consequences}.
+This is a specific set of published sequence conjectures. The source
+check documents their listed status; it does not certify that no
+unindexed proof exists elsewhere.
+
+Throughout, congruences of formal series mean coefficientwise congruences.
+No analytic convergence is required. Put $R=\Z/8\Z$ and define
+\begin{equation}\label{eq:model}
+M_k(x)=\frac{x}{1-kx},\qquad
+H(x)=\frac{x^4}{(1-x)^3},\qquad
+F(x)=M_1(x)+4H(x).
+\end{equation}
+Every denominator here has constant coefficient one and is therefore
+invertible in the relevant formal power series ring.
+
+\begin{theorem}\label{thm:main}
+The defining equation~\eqref{eq:definition} has a unique solution in
+$x+x^2\Z[[x]]$. For this solution and every $k\in\Z$,
+\begin{equation}\label{eq:main}
+\itn{A}{k}(x)\equiv M_k(x)+4\eps_kH(x)\pmod 8,
+\end{equation}
+where $\eps_k$ is the parity of $k$. In particular, for $n\geq2$,
+\begin{equation}\label{eq:coefficients}
+\coeff{n}{\itn{A}{k}(x)}
+\equiv k^{n-1}+4\eps_k\binom{n-2}{2}\pmod 8,
+\end{equation}
+where $\binom{0}{2}=\binom{1}{2}=0$. The coefficient of $x$ is one
+for every $k$.
+\end{theorem}
+
+\section{Uniqueness of the defining formal series}
+
+The following argument works over a commutative ring, including rings
+with zero divisors. This matters when reducing modulo eight.
+
+\begin{lemma}\label{lem:fixedpoint}
+Let $S$ be a commutative ring with identity and let $r,s\geq1$ be
+integers. There is exactly one $B\in x+x^2S[[x]]$ satisfying
+$B=x+\itn{B}{r}\itn{B}{s}$.
+\end{lemma}
+
+\begin{proof}
+For $B\in x+x^2S[[x]]$ write
+$T(B)=x+\itn{B}{r}\itn{B}{s}$. Suppose $B-C\in x^NS[[x]]$, with
+$N\geq2$. Substitution by a series of order one preserves divisibility
+by $x^N$. Also, if $U-V$ is divisible by $x^N$, then so is
+$D(U)-D(V)$ for every formal series $D$ for which the substitutions
+are defined: apply $U^j-V^j=(U-V)\sum_{i=0}^{j-1}U^{j-1-i}V^i$
+term by term. Induction on the number of substitutions consequently gives
+$\itn{B}{j}-\itn{C}{j}\in x^NS[[x]]$ for all $j\geq0$.
+
+Both factors in the product defining $T$ have order one, so
+\begin{align*}
+T(B)-T(C)
+&=(\itn{B}{r}-\itn{C}{r})\itn{B}{s}
+  +\itn{C}{r}(\itn{B}{s}-\itn{C}{s})\\
+&\in x^{N+1}S[[x]].
+\end{align*}
+Starting with $B_0=x$ and putting $B_{j+1}=T(B_j)$, we obtain
+$B_{j+1}-B_j\in x^{j+2}S[[x]]$. Hence each coefficient eventually
+stabilizes. Their coefficientwise limit is a fixed point because addition,
+multiplication, and these substitutions respect finite truncations.
+
+If two fixed points first differed in degree $N$, their images under
+$T$ could not differ before degree $N+1$, a contradiction. This proves
+uniqueness. The construction also shows that reducing coefficients
+modulo an integer commutes with taking this fixed point.
+\end{proof}
+
+\section{An explicit series of order eight}
+
+The elementary fractional-linear identity
+\begin{equation}\label{eq:mobius}
+M_u\bigl(M_v(x)\bigr)=M_{u+v}(x)
+\end{equation}
+holds over any commutative ring. The additional term $4H$ in $F$
+has a useful property: products of two such perturbations vanish in $R$.
+
+\begin{lemma}\label{lem:square}
+In $R[[x]]$, $\itn{F}{2}(x)=M_2(x)$.
+\end{lemma}
+
+\begin{proof}
+Since $4^2=0$ in $R$, the binomial theorem gives the exact first-order
+substitution rule
+\begin{equation}\label{eq:taylor}
+P(U+4V)=P(U)+4V P'(U)
+\end{equation}
+for formal series $U,V\in xR[[x]]$. There are no divisions by
+factorials in this identity. Apply it to $F=M_1+4H$:
+\[
+\itn{F}{2}=M_1\circ M_1+
+4\bigl(H\circ M_1+(M_1'\circ M_1)H\bigr).
+\]
+It is enough to evaluate the parenthesis modulo two. In $\mathbb F_2[[x]]$,
+direct substitution gives
+\[
+H\bigl(M_1(x)\bigr)=\frac{x^4}{1-x},
+\qquad
+M_1'\bigl(M_1(x)\bigr)H(x)=\frac{x^4}{1-x}.
+\]
+Their sum is zero. The correction multiplied by four therefore vanishes
+modulo eight, and~\eqref{eq:mobius} proves the claim.
+\end{proof}
+
+\begin{lemma}\label{lem:iterates}
+For every integer $k$, the identity
+$\itn{F}{k}=M_k+4\eps_kH$ holds in $R[[x]]$.
+\end{lemma}
+
+\begin{proof}
+First take $k\geq0$. By Lemma~\ref{lem:square} and~\eqref{eq:mobius},
+$\itn{F}{2j}=M_{2j}$. For the next iterate,
+\[
+\itn{F}{2j+1}=F\circ M_{2j}
+=M_{2j+1}+4H\circ M_{2j}.
+\]
+But $M_{2j}(x)\equiv x\pmod2$, so
+$4H\circ M_{2j}=4H$ in $R[[x]]$. This proves the formula for
+nonnegative $k$.
+
+In particular, $\itn{F}{8}=M_8=x$. Thus $F$ has an inverse under
+composition and its integer iterates depend only on $k$ modulo eight.
+The right-hand side $M_k+4\eps_kH$ has the same dependence. The
+formula consequently holds for negative $k$ as well.
+\end{proof}
+
+\section{Verification of the fixed point}
+
+We now identify $F$ with the reduction of $A$. This step verifies the
+defining equation itself, rather than merely matching initial coefficients.
+
+\begin{lemma}\label{lem:equation}
+The series $F$ satisfies $F=x+\itn{F}{4}\itn{F}{5}$ in $R[[x]]$.
+\end{lemma}
+
+\begin{proof}
+Lemma~\ref{lem:iterates} gives
+$\itn{F}{4}=M_4=x+4x^2$ and $\itn{F}{5}=M_5+4H$ in $R[[x]]$.
+Consequently,
+\[
+\itn{F}{4}\itn{F}{5}
+=\frac{x^2(1+4x)}{1-5x}+4xH.
+\]
+Using $F-x=x^2/(1-x)+4H$, their difference is
+\begin{align*}
+F-x-\itn{F}{4}\itn{F}{5}
+&=\frac{x^2}{1-x}-\frac{x^2(1+4x)}{1-5x}+4(1-x)H\\
+&=4x^4\left(\frac{1}{(1-x)(1-5x)}+
+                    \frac{1}{(1-x)^2}\right)
+\quad\text{in }R[[x]].
+\end{align*}
+The expression in parentheses is zero modulo two, because
+$1-5x\equiv1-x\pmod2$. After multiplication by four it is zero
+modulo eight. This proves the identity.
+\end{proof}
+
+\begin{proof}[Proof of Theorem~\ref{thm:main}]
+Apply Lemma~\ref{lem:fixedpoint} over $\Z$ to obtain $A$, and over
+$R$ to its reduction. Lemma~\ref{lem:equation} shows that $F$ is
+the latter fixed point. Uniqueness therefore gives $A\equiv F\pmod8$.
+Composition, including composition with inverses, respects coefficient
+reduction. Lemma~\ref{lem:iterates} proves~\eqref{eq:main}.
+
+Finally,
+$M_k(x)=\sum_{n\geq1}k^{n-1}x^n$ and
+$H(x)=\sum_{n\geq4}\binom{n-2}{2}x^n$.
+Extracting coefficients gives~\eqref{eq:coefficients} and the separate
+coefficient-one statement in degree one. For $k=0$, one may simply use
+$M_0=x$, avoiding any need to interpret $0^0$.
+\end{proof}
+
+\section{The conjectures and the indexing correction}\label{sec:consequences}
+
+For odd $k$, the coefficient tail beginning at $n=2$ repeats the block
+$(k,1,k+4,5)$ modulo eight. Indeed, $k^2\equiv1\pmod8$, while the
+parity of $\binom{n-2}{2}$ repeats $0,0,1,1$ from $n=2$ onward.
+For even $k$, the perturbation vanishes and $k^3\equiv0\pmod8$.
+The complete results for one period of iterates are as follows.
+
+\begin{center}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{@{}cl@{}}
+\toprule
+Iterate & Exact description modulo $8$\\
+\midrule
+$1$ & Coefficient of $x$: $1$; from $n=2$: $(1,1,5,5)$ repeating\\
+$2$ & $x+2x^2+4x^3$\\
+$3$ & Coefficient of $x$: $1$; from $n=2$: $(3,1,7,5)$ repeating\\
+$4$ & $x+4x^2$\\
+$5$ & Coefficient of $x$: $1$; from $n=2$: $(5,1,1,5)$ repeating\\
+$6$ & $x+6x^2+4x^3$\\
+$7$ & Coefficient of $x$: $1$; from $n=2$: $(7,1,3,5)$ repeating\\
+$8$ & $x$\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Rows $2$ through $8$ prove the seven iteration assertions in the source.
+For the remaining coefficient claim, the repeating block $(1,1,5,5)$
+starts at $n=2$, with $a(1)=1$ separate. Starting that same block at
+$n=1$ would predict $a(3)\equiv5$, whereas $a(3)=9\equiv1$.
+Thus the literal starting index in the consulted record cannot be retained.
+The corrected formula, valid for every index, is
+\[
+a(1)=1,\qquad
+a(n)\equiv
+\begin{cases}
+1 & n\equiv2,3\pmod4,\\
+5 & n\equiv0,1\pmod4
+\end{cases}
+\quad(n\geq2).
+\]
+
+\begin{corollary}
+The reduction of $A$ modulo eight has compositional order exactly eight.
+For all $k\in\Z$, $\itn{A}{k+8}\equiv\itn{A}{k}\pmod8$.
+\end{corollary}
+
+\begin{proof}
+The eighth iterate is $x$. Conversely, the coefficient of $x^2$ in
+$\itn{A}{k}$ is $k$ modulo eight, so an iterate equal to $x$ must
+have $8\mid k$.
+\end{proof}
+
+\section{Reproducible exact checks}
+
+The accompanying file \texttt{verify\_a396798.py} uses Python's standard
+library only. It verifies rational functions by cross-multiplying their
+polynomial numerators and denominators in $(\Z/8\Z)[x]$. All denominators
+have odd constant coefficients, so these checks certify identities of
+formal series to every degree. In particular, the script checks
+$F\circ F=M_2$, each transition between the eight proposed iterate
+formulas, and the defining identity $F=x+\itn{F}{4}\itn{F}{5}$.
+
+As separate arithmetic checks, it reconstructs the first twenty integer
+coefficients directly from~\eqref{eq:definition} and compares them with
+the source data. It then reconstructs $A$ modulo eight through degree
+$64$ and checks every coefficient of iterates $k=0,\ldots,16$ against
+the theorem. All checks pass. These finite comparisons supplement the
+formal proof; the rational identities and the uniqueness argument supply
+the statements for arbitrary degree.
+
+Run the checks with \texttt{python3 verify\_a396798.py} in GITHUB \url{https://github.com/PolloXDDD/a396798_repository}. The manuscript
+is self-contained and compiles with \texttt{pdflatex}; no external
+figures or bibliography files are required.
+
+
+\begin{thebibliography}{9}
+\bibitem{oeis}
+Paul D. Hanna,
+\emph{A396798: G.f. satisfies $A(x)=x+A^4(x)A^5(x)$},
+The On-Line Encyclopedia of Integer Sequences, June 16, 2026.
+Here the superscripts in the source title denote iteration.
+\url{https://oeis.org/A396798}; internal record:
+\url{https://oeis.org/A396798/internal}.
+Consulted September 22, 2026.
+\end{thebibliography}
+
+\end{document}
